@@ -55,9 +55,17 @@ for file in files:
             
             for j in range(len(i.split())):
                 if i.split()[j] == "int":
-                    k=len(i.split()[j+1].split(','))
-                    total_size=total_size+di["int"]*k
-                    print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
+                    temp = i.split()[j+1].split(',')
+                    count=0
+                    for l in temp:
+                        if l[0] == '*':
+                           total_size=total_size+di["*"]
+                           count=count+1
+                        else :
+                            total_size=total_size+di["int"]
+##                    k=len(i.split()[j+1].split(','))
+##                    total_size=total_size+di["int"]*(k-count)
+##                    print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
                 elif i.split()[j] == "char":
                     k=len(i.split()[j+1].split(','))
                     total_size=total_size+di["char"]*k
@@ -71,19 +79,23 @@ for file in files:
             
                 
             
-            if openbrace_flag == 0:
-                struct_name=i.split()[1]
-                if struct_name in struct_names:
+            if i.split()[0]=="struct":
+                struct_name1=i.split()[1]
+                if struct_name1 in struct_names:
                     total_size=total_size+struct_names[struct_name]
+                else :
+                    struct_name=struct_name1
             if i.split()[-1] == '};':
                 openbrace_flag=0
                 struct_names[struct_name]=total_size
                 total_size=0
                 print("i am out of " ,struct_name)
-                struct_name=""   
+                struct_name=""
+                print(struct_names)
             if i.split()[-1] == '{' :
                 openbrace_flag=1
-                print("Flag open")  
+                print("Flag open")
+    file_struct.append(struct_names)
             
             
             

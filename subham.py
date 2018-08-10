@@ -8,6 +8,8 @@ import re
 import os
 fob1=open("config.ini","r")
 dct={}
+dct_32={"int":4,"char":1,"float":8,"*":4}
+dct_64={"int":8,"char":1,"float":8,"*":8}
 for line in fob1:
     if(line[0]=='[' and line[-2]==']'):
         pass
@@ -28,10 +30,14 @@ for ele in flst:
             req_files.append(path+"/"+ele1)
 
 
-    
-
+di={}
+if dct["arch"] == "64":
+    di=dct_64
+else : di=dct_32
+if dct["cellpad"] == "true":
+    di["char"]=4
 files=req_files
-
+print(di)
 for file in files:
     file_struct=[]
     print("In File: ",file)
@@ -44,6 +50,9 @@ for file in files:
         struct_name=""
         if(i.split()[0]=="struct" or openbrace_flag==1):
             print(i.split())
+            for j in i.split():
+                if j == "int":
+                    total_size=total_size+di["int"]
             if(i.split()[-1] == '};'):
                 openbrace_flag==0
             if(i.split()[-1] == '{'):
@@ -52,6 +61,7 @@ for file in files:
                 struct_name=i.split()[1]
                 if struct_name in struct_names:
                     total_size=total_size+struct_names[struct_name]
+                
             
             print(re.search('{',i))
             print(re.search('}',i))

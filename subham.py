@@ -50,9 +50,10 @@ for file in files:
         struct_name=""
         if(i.split()[0]=="struct" or openbrace_flag==1):
             print(i.split())
-            for j in i.split():
-                if j == "int":
-                    total_size=total_size+di["int"]
+            for j in len(i.split()):
+                if i.split()[j] == "int":
+                    k=len(i.split()[j+1].split(','))
+                    total_size=total_size+di["int"]*k
             if(i.split()[-1] == '};'):
                 openbrace_flag==0
             if(i.split()[-1] == '{'):

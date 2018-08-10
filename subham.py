@@ -24,14 +24,19 @@ for line in fob1:
         dct[lst1[0]]=lst1[1]
 
 req_files=[]
+flst=[]
 path=dct["inputfile"][1:-1]
-flst=os.walk(path)
-for ele in flst:
-    #print(type(ele))
-    files=ele[-1]
-    for ele1 in files:
-        if ele1.endswith('.h'):
-            req_files.append(path+"/"+ele1)
+if os.path.isfile(path):
+    flst.append(path)
+    req_files.append(path)
+else :    
+    flst=os.walk(path)
+    for ele in flst:
+        #print(type(ele))
+        files=ele[-1]
+        for ele1 in files:
+            if ele1.endswith('.h'):
+                req_files.append(path+"/"+ele1)
 
 log.basicConfig(level=log.DEBUG,filename=dct["logfile"][1:-1])
 if(len([flst])==0):

@@ -1,13 +1,19 @@
-#arch
-#cellpad
-#inputfile
-#outputfile
-#logfile
-import glob
-import re
+#forlogging
 import os
-fob1=open("config.ini","r")
+import logging as log
+import csv
+fob1=open("configtemp.ini","r")
+
+#log.debug("hello 1")
+#log.info ("hello 2")
+#log.warning("hello 3")
+#log.error("hello 4")
+#log.critical("hello 5")
+
+log.basicConfig(level=log.DEBUG,filename="app.log")
+
 dct={}
+log.info("Collecting the values from config")
 for line in fob1:
     if(line[0]=='[' and line[-2]==']'):
         pass
@@ -16,43 +22,32 @@ for line in fob1:
         p=line1.rstrip('\n')
         lst1=p.split('=')
         dct[lst1[0]]=lst1[1]
-
 req_files=[]
+log.info("Collecting the header files from the given path")
 path=dct["inputfile"][1:-1]
-flst=os.walk(path)
-for ele in flst:
-    #print(type(ele))
-    files=ele[-1]
-    for ele1 in files:
-        if ele1.endswith('.h'):
-            req_files.append(path+"/"+ele1)
+flst=list(os.walk(path))
+if(len(flst)==0):
+    log.error("There are no header files in the specified path")
 
 
-    
+log.info("Writing the contents to csv file")
 
-files=req_files
 
-for file in files:
-    file_struct=[]
-    print("In File: ",file)
-    fob=open(file,"r")
-    openbrace_flag=0
-    total_size=0
-    for i in fob:
-        i=i.rstrip()
-        struct_names=[]
-        struct_name=""
-        if(i.split()[0]=="struct" or openbrace_flag==1):
-            print(i.split())
-            if(i.split()[-1] == '};'):
-                openbrace_flag==0
-            if(i.split()[-1] == '{'):
-                openbrace_flag==1
-            if openbrace_flag == 0:
-                struct_name=i.split()[1]
-                if struct_name in struct_names:
-                    total_size=total_size+struct_names[struct_name]
-            
-            print(re.search('{',i))
-            print(re.search('}',i))
-            
+dct_write={"Date":"239193","Filename":"1.txt","Structname":"cacjnka","size":5}
+dct_write2={"Date":"23ds9193","Filename":"2.txt","Structname":"sascacjnka","size":15}
+
+lst_final=[dct_write,dct_write2]
+
+lst_write=[]
+flag=0
+for finalele in lst_final:
+    lst_write=[]
+    dct_write=finalele
+    for ele in dct_write:
+        lst_write.append(dct_write[ele])
+    with open('people.csv', 'a') as writeFile:
+        writer = csv.writer(writeFile)
+        if(flag==0):
+            writer.writerows([["Date","Filename","Structname","size"]])
+            flag=1
+        writer.writerows([lst_write])   

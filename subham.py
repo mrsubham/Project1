@@ -75,16 +75,16 @@ for file in files:
                     total_size=total_size+di["float"]*k
 
                     print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
+                elif i.split()[j] == "struct" and openbrace_flag == 1:
+                    total_size=total_size+struct_names[i.split()[j+1][:-1]]
                 else : print("skipping")
             
                 
             
-            if i.split()[0]=="struct":
-                struct_name1=i.split()[1]
-                if struct_name1 in struct_names:
+            if openbrace_flag == 0:
+                struct_name=i.split()[1]
+                if struct_name in struct_names:
                     total_size=total_size+struct_names[struct_name]
-                else :
-                    struct_name=struct_name1
             if i.split()[-1] == '};':
                 openbrace_flag=0
                 struct_names[struct_name]=total_size

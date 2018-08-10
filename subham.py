@@ -6,6 +6,10 @@
 import glob
 import re
 import os
+import logging as log
+import csv
+from datetime import date
+
 fob1=open("config.ini","r")
 dct={}
 dct_32={"int":4,"char":1,"float":8,"*":4}
@@ -29,7 +33,9 @@ for ele in flst:
         if ele1.endswith('.h'):
             req_files.append(path+"/"+ele1)
 
-
+log.basicConfig(level=log.DEBUG,filename=dct["logfile"][1:-1])
+if(len([flst])==0):
+    log.error("There are no header files in the specified path")
 di={}
 if dct["arch"] == "64":
     di=dct_64
@@ -38,7 +44,7 @@ if dct["cellpad"] == "true":
     di["char"]=4
 files=req_files
 print(di)
-file_struct=[]
+file_struct={}
 for file in files:
     
     print("In File: ",file)
@@ -95,7 +101,21 @@ for file in files:
             if i.split()[-1] == '{' :
                 openbrace_flag=1
                 print("Flag open")
-    file_struct.append(struct_names)
-            
-            
-            
+
+    
+    file_struct[file]={"Date":str(date.today()),"Structures":struct_names}
+log.info("Writing the contents to csv file")        
+for key,value in file_struct.items():
+    value_dct=value
+    write_file=key
+    write_date=value_dct["Date"]
+    structures=value_dct["Structures"]
+    if structures != {}:
+        
+        for key1,value1 in structures.items():
+            with open(dct["outputfile"][1:-1],'a') as writeFile:
+                writer=csv.writer(writeFile)
+                writer.writerows([[write_date,write_file,key1,value1]])
+                
+                
+

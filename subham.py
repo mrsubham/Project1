@@ -38,32 +38,52 @@ if dct["cellpad"] == "true":
     di["char"]=4
 files=req_files
 print(di)
+file_struct=[]
 for file in files:
-    file_struct=[]
+    
     print("In File: ",file)
     fob=open(file,"r")
     openbrace_flag=0
     total_size=0
+    struct_names={}
     for i in fob:
         i=i.rstrip()
-        struct_names=[]
-        struct_name=""
-        if(i.split()[0]=="struct" or openbrace_flag==1):
+        
+        print("In line:",i,openbrace_flag)
+        if i.split()[0]=="struct" or openbrace_flag==1 :
             print(i.split())
-            for j in len(i.split()):
+            
+            for j in range(len(i.split())):
                 if i.split()[j] == "int":
                     k=len(i.split()[j+1].split(','))
                     total_size=total_size+di["int"]*k
-            if(i.split()[-1] == '};'):
-                openbrace_flag==0
-            if(i.split()[-1] == '{'):
-                openbrace_flag==1
+                    print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
+                elif i.split()[j] == "char":
+                    k=len(i.split()[j+1].split(','))
+                    total_size=total_size+di["char"]*k
+                    print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
+                elif i.split()[j] == "float":
+                    k=len(i.split()[j+1].split(','))
+                    total_size=total_size+di["float"]*k
+
+                    print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
+                else : print("skipping")
+            
+                
+            
             if openbrace_flag == 0:
                 struct_name=i.split()[1]
                 if struct_name in struct_names:
                     total_size=total_size+struct_names[struct_name]
-                
+            if i.split()[-1] == '};':
+                openbrace_flag=0
+                struct_names[struct_name]=total_size
+                total_size=0
+                print("i am out of " ,struct_name)
+                struct_name=""   
+            if i.split()[-1] == '{' :
+                openbrace_flag=1
+                print("Flag open")  
             
-            print(re.search('{',i))
-            print(re.search('}',i))
+            
             

@@ -25,30 +25,26 @@ for line in fob1:
 
 req_files=[]
 flst=[]
-flag_p=0
 path=dct["inputfile"][1:-1]
 if os.path.isfile(path):
-    #print(os.path.exists(path))
-    #print("yes")
-    flst.append(path)
-    req_files.append(path)
-else :    
-    flst=os.walk(path)
-    #print(os.path.exists(path))
-    if(not os.path.exists(path)):
-       flag_p=1
-    for ele in flst:
+         print("in if")
+         flst.append(path)
+    	req_files.append(path)
+else :
+	print("in else")    
+    	flst=os.walk(path)
+    	for ele in flst:
         #print(type(ele))
-        files=ele[-1]
-        for ele1 in files:
-            if ele1.endswith('.h'):
-                req_files.append(path+"/"+ele1)
+        	         files=ele[-1]
+         	for ele1 in files:
+            	         if ele1.endswith('.h'):
+                	                  req_files.append(path+"/"+ele1)
 
-#print(flag_p)
+#print(len([flst]))
 
 log.basicConfig(level=log.DEBUG,filename=dct["logfile"][1:-1])
 log.info("Finding header files") 
-if(flag_p==1):
+if((len([flst]))==0):
     log.error("There are no header files in the specified path")
 di={}
 if dct["arch"] == "64":

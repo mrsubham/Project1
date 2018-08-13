@@ -38,8 +38,11 @@ else :
             if ele1.endswith('.h'):
                 req_files.append(path+"/"+ele1)
 
+#print(len([flst]))
+
 log.basicConfig(level=log.DEBUG,filename=dct["logfile"][1:-1])
-if(len([flst])==0):
+log.info("Finding header files") 
+if((len([flst]))==0):
     log.error("There are no header files in the specified path")
 di={}
 if dct["arch"] == "64":
@@ -48,11 +51,12 @@ else : di=dct_32
 if dct["cellpad"] == "true":
     di["char"]=4
 files=req_files
-print(di)
+#print(di)
 file_struct={}
+log.info("Finding sizes of the structures") 
 for file in files:
     
-    print("In File: ",file)
+    #print("In File: ",file)
     fob=open(file,"r")
     openbrace_flag=0
     total_size=0
@@ -60,9 +64,9 @@ for file in files:
     for i in fob:
         i=i.rstrip()
         
-        print("In line:",i,openbrace_flag)
+        #print("In line:",i,openbrace_flag)
         if i.split()[0]=="struct" or openbrace_flag==1 :
-            print(i.split())
+            #print(i.split())
             
             for j in range(len(i.split())):
                 if i.split()[j] == "int":
@@ -80,15 +84,15 @@ for file in files:
                 elif i.split()[j] == "char":
                     k=len(i.split()[j+1].split(','))
                     total_size=total_size+di["char"]*k
-                    print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
+                    #print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
                 elif i.split()[j] == "float":
                     k=len(i.split()[j+1].split(','))
                     total_size=total_size+di["float"]*k
 
-                    print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
+                    #print("Calculating size of",i.split()[j],i.split()[j+1].split(','),k,di["int"]*k)
                 elif i.split()[j] == "struct" and openbrace_flag == 1:
                     total_size=total_size+struct_names[i.split()[j+1][:-1]]
-                else : print("skipping")
+                else : pass#print("skipping")
             
                 
             
@@ -100,12 +104,12 @@ for file in files:
                 openbrace_flag=0
                 struct_names[struct_name]=total_size
                 total_size=0
-                print("i am out of " ,struct_name)
+                #print("i am out of " ,struct_name)
                 struct_name=""
-                print(struct_names)
+                #print(struct_names)
             if i.split()[-1] == '{' :
                 openbrace_flag=1
-                print("Flag open")
+                #print("Flag open")
 
     
     file_struct[file]={"Date":str(date.today()),"Structures":struct_names}
